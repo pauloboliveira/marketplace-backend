@@ -6,6 +6,8 @@ import com.dev.suacomanda.domain.product.CategoryDTO;
 import com.dev.suacomanda.repositories.CategoryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CategoryService {
 
@@ -30,5 +32,13 @@ public class CategoryService {
 
     public void deleteById(String id) {
         categoryRepository.deleteById(id);
+    }
+
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
+    public Category findById(String id) {
+        return categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
     }
 }
