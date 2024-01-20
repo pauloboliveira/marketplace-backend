@@ -1,7 +1,7 @@
 package com.dev.suacomanda.controller;
 
 import com.dev.suacomanda.domain.category.Category;
-import com.dev.suacomanda.domain.product.CategoryDTO;
+import com.dev.suacomanda.domain.category.CategoryDTO;
 import com.dev.suacomanda.service.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -2,11 +2,12 @@ package com.dev.suacomanda.service;
 
 import com.dev.suacomanda.domain.category.Category;
 import com.dev.suacomanda.domain.category.exception.CategoryNotFoundException;
-import com.dev.suacomanda.domain.product.CategoryDTO;
+import com.dev.suacomanda.domain.category.CategoryDTO;
 import com.dev.suacomanda.repositories.CategoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @Service
 public class CategoryService {
@@ -23,7 +24,7 @@ public class CategoryService {
     }
 
     public Category update(CategoryDTO categoryDTO, String id) {
-        Category category = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
+        Category category = categoryRepository.findById(id).orElseThrow(throwCategoryNotFoundException());
         if(!categoryDTO.description().isEmpty()) category.setDescription(categoryDTO.description());
         if(!categoryDTO.title().isEmpty()) category.setTitle(categoryDTO.title());
 
@@ -39,6 +40,10 @@ public class CategoryService {
     }
 
     public Category findById(String id) {
-        return categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
+        return categoryRepository.findById(id).orElseThrow(throwCategoryNotFoundException());
+    }
+
+    private static Supplier<CategoryNotFoundException> throwCategoryNotFoundException() {
+        return () -> new CategoryNotFoundException("Não foi possível encontrar a categoria informada");
     }
 }
