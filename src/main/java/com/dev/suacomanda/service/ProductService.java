@@ -5,10 +5,12 @@ import com.dev.suacomanda.domain.product.Product;
 import com.dev.suacomanda.domain.product.ProductDTO;
 import com.dev.suacomanda.domain.product.exception.ProductNotFoundException;
 import com.dev.suacomanda.repositories.ProductRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @Service
@@ -16,7 +18,7 @@ public class ProductService {
 
     private ProductRepository productRepository;
 
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     public ProductService(ProductRepository productRepository, CategoryService categoryService) {
         this.productRepository = productRepository;
@@ -57,4 +59,7 @@ public class ProductService {
     }
 
 
+    public Optional<List<Product>> findProductsByCategory(String id) {
+        return productRepository.findByCategory_Id(id);
+    }
 }
