@@ -13,16 +13,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AWSSnsConfig {
 
-    @Value("{aws.region}")
+    @Value("${aws.region}")
     private String region;
 
-    @Value("{aws.accessKeyId}")
+    @Value("${aws.accessKeyId}")
     private String accessKeyId;
 
-    @Value("{aws.secretKey}")
+    @Value("${aws.secretKey}")
     private String secretKey;
 
-    @Value("{aws.sns.topic.catalog.arn}")
+    @Value("${aws.sns.topic.catalog.arn}")
     private String snsCatalogArn;
 
     @Bean

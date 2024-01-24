@@ -1,11 +1,11 @@
 package com.dev.suacomanda.service;
 
+import com.dev.suacomanda.domain.aws.MessageDTO;
 import com.dev.suacomanda.domain.category.Category;
 import com.dev.suacomanda.domain.product.Product;
 import com.dev.suacomanda.domain.product.ProductDTO;
 import com.dev.suacomanda.domain.product.exception.ProductNotFoundException;
 import com.dev.suacomanda.repositories.ProductRepository;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,18 +16,24 @@ import java.util.function.Supplier;
 @Service
 public class ProductService {
 
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     private final CategoryService categoryService;
 
-    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
+    private final SNSService snsService;
+
+    public ProductService(ProductRepository productRepository, CategoryService categoryService, SNSService snsService) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
+        this.snsService = snsService;
     }
 
     public Product insert(ProductDTO productDTO) {
         Category category = categoryService.findById(productDTO.categoryId());
-        return productRepository.insert(new Product().fromDTO(productDTO, category));
+        Product product = productRepository.insert(new Product().fromDTO(productDTO, category));
+
+        snsService.sendMessage(new MessageDTO(product.getOwnerId()));
+        return product;
     }
 
     public Product update(ProductDTO productDTO, String id) {
@@ -39,7 +45,11 @@ public class ProductService {
         if(Objects.nonNull(productDTO.price())) product.setPrice(productDTO.price());
         product.setCategory(category);
 
-        return productRepository.save(product);
+        productRepository.save(product);
+
+        snsService.sendMessage(new MessageDTO(product.getOwnerId()));
+
+        return product;
     }
 
     public void deleteById(String id) {
@@ -59,7 +69,4 @@ public class ProductService {
     }
 
 
-    public Optional<List<Product>> findProductsByCategory(String id) {
-        return productRepository.findByCategory_Id(id);
-    }
 }
