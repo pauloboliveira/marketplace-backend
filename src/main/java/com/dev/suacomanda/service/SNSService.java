@@ -1,6 +1,7 @@
 package com.dev.suacomanda.service;
 
 import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.model.SubscribeRequest;
 import com.amazonaws.services.sns.model.Topic;
 import com.dev.suacomanda.domain.aws.MessageDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +23,5 @@ public class SNSService {
     public void sendMessage(MessageDTO messageData) {
         snsClient.publish(catalogTopic.getTopicArn(), messageData.message());
     }
-
 
 }
