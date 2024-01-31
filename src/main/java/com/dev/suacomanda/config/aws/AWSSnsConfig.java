@@ -18,36 +18,23 @@ public class AWSSnsConfig {
     @Value("${aws.region}")
     private String region;
 
-    @Value("${aws.accessKeyId}")
-    private String accessKeyId;
-
-    @Value("${aws.secretKey}")
-    private String secretKey;
-
     @Value("${aws.sns.topic.catalog.arn}")
     private String snsCatalogArn;
 
-    @Value("${aws.sqs.endpoint}")
-    private String endpoint;
+    private final BasicAWSCredentials basicAWSCredentials;
 
-    @Value("${aws.sqs.protocol}")
-    private String protocol;
+    public AWSSnsConfig(BasicAWSCredentials basicAWSCredentials) {
+        this.basicAWSCredentials = basicAWSCredentials;
+    }
 
     @Bean
     public AmazonSNS amazonSNSBuilder() {
-        BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKeyId, secretKey);
-
         return AmazonSNSClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials)).withRegion(region).build();
     }
 
     @Bean(name = "catalogEventsTopic")
     public Topic awsCatalogTopicBuilder() {
         return new Topic().withTopicArn(snsCatalogArn);
-    }
-
-    @Bean
-    public Subscription subscribe() {
-        return new Subscription().withTopicArn(snsCatalogArn).withEndpoint(endpoint).withProtocol(protocol);
     }
 
 }
