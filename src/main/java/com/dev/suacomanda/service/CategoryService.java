@@ -1,5 +1,6 @@
 package com.dev.suacomanda.service;
 
+import com.dev.suacomanda.domain.aws.MessageDTO;
 import com.dev.suacomanda.domain.category.Category;
 import com.dev.suacomanda.domain.category.CategoryDTO;
 import com.dev.suacomanda.domain.category.exception.CategoryNotFoundException;
@@ -14,14 +15,20 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    private final MessageService messageService;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+
+    public CategoryService(CategoryRepository categoryRepository, MessageService messageService) {
         this.categoryRepository = categoryRepository;
+        this.messageService = messageService;
     }
 
     public Category insert(CategoryDTO categoryDTO) {
-        Category category = new Category(categoryDTO);
-        return categoryRepository.save(category);
+        Category category = categoryRepository.save(new Category(categoryDTO));
+
+        messageService.sendMessage(new MessageDTO(categoryDTO.ownerId()));
+
+        return category;
     }
 
     public Category update(CategoryDTO categoryDTO, String id) {
@@ -29,7 +36,11 @@ public class CategoryService {
         if(!categoryDTO.description().isEmpty()) category.setDescription(categoryDTO.description());
         if(!categoryDTO.title().isEmpty()) category.setTitle(categoryDTO.title());
 
-        return categoryRepository.save(category);
+        categoryRepository.save(category);
+
+        messageService.sendMessage(new MessageDTO(categoryDTO.ownerId()));
+
+        return category;
     }
 
     public void deleteById(String id) {
