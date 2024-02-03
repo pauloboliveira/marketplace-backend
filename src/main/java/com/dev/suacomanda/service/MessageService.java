@@ -12,19 +12,15 @@ public class MessageService {
 
     private final AmazonSNS snsClient;
 
-    private final AmazonSQS sqsClient;
-
     private final Topic catalogTopic;
 
-    public MessageService(AmazonSNS snsClient, @Qualifier("catalogEventsTopic") Topic catalogTopic, AmazonSQS sqsClient) {
+    public MessageService(AmazonSNS snsClient, @Qualifier("catalogEventsTopic") Topic catalogTopic) {
         this.snsClient = snsClient;
         this.catalogTopic = catalogTopic;
-        this.sqsClient = sqsClient;
     }
 
 
     public void sendMessage(MessageDTO messageData) {
         snsClient.publish(catalogTopic.getTopicArn(), messageData.message());
     }
-
 }
